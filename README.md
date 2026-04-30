@@ -636,7 +636,10 @@ VALUES (999, 1, '2026-05-01');
 > **Question 5.1:** Which specific constraint fired? Name the table and the
 > foreign key column involved.
 >
-> *Your answer:*
+> Table: loan, Foreign Key Column: member_no ....
+> The database stopped the operation because the member_no 999 does not exist in the member table.
+> Since PRAGMA foreign_keys = ON was active, the database enforced the referential integrity rule defined in your schema,
+> preventing a "child" record (the loan) from existing without a valid "parent" record (the member).
 
 ### Task 5b – Delete a member with active loans
 
@@ -652,7 +655,10 @@ DELETE FROM member WHERE member_no = 102;
 > `DELETE`. What happens to Schneider's loan row? Is this behaviour desirable
 > for a library system? Justify your answer.
 >
-> *Your answer:*
+> If ON DELETE CASCADE were used, Schneider’s loan row would be automatically deleted without warning,
+>  which is undesirable because it destroys the library's only record of who physically possesses the book.
+> This creates a security risk where members could keep books permanently without any accountability
+> or audit trail left in the system.
 
 ### Task 5c – Verify the composite primary key of `writes`
 
@@ -666,7 +672,10 @@ INSERT INTO writes VALUES (1, '978-0-201-96426-4');
 > here – but also a *primary key*. Can a relation have two candidate keys? Give
 > an example from the library schema.
 >
-> *Your answer:*
+> Yes, a relation can have multiple candidate keys because a primary key is simply the specific candidate key chosen by the
+> designer to be the main identifier for the table. An example from our library schema is the member table,
+> which has two candidate keys: member_no (the primary key) and email (marked as UNIQUE),
+> as both are guaranteed to uniquely identify a single member record.
 
 ---
 
@@ -771,7 +780,8 @@ If you have not used `scp` before, work through this exercise first:
 > **Screenshot 3:** Take a screenshot of `schema.svg` showing all six entities
 > and all five relationships, and insert it here.
 >
-> `[insert screenshot]`
+><img width="1180" height="1004" alt="image" src="https://github.com/user-attachments/assets/57031696-1300-4a86-9b33-aab9e7f400d5" />
+
 
 Add `schema.svg` to `.gitignore` (it is generated, not authored):
 
@@ -815,7 +825,9 @@ joins. SQL does not prescribe an execution order; the query optimizer may
 reorder these joins freely. Under what condition would reordering a join change
 the *result* of a query? Under what condition is it always safe?
 
-> *Your answer:*
+> Reordering is always safe for inner joins because they are associative, meaning the result remains identical regardless of the sequence.
+> However, reordering will change the result when outer joins are involved, as the specific order of tables determines which records are
+> preserved and which are padded with nulls.
 
 **Question B – NULL semantics:**  
 `return_date` is `NULL` for an open loan. `NULL` in SQL does not mean zero or
@@ -823,7 +835,10 @@ false – it means *unknown*. Consider the query `WHERE return_date = NULL`.
 Will it return the open loans? Explain why or why not and write the correct
 form.
 
-> *Your answer:*
+> Nope, it will not return the open loans. In SQL, any direct comparison with NULL using = results in UNKNOWN rather than true or false;
+> since the WHERE clause only accepts TRUE results, the rows are filtered out.
+> The correct form is: WHERE return_date IS NULL;
+> 
 
 **Question C – Surrogate vs. natural key:**  
 `book` uses `isbn` as its natural primary key; all other entities use surrogate
@@ -831,7 +846,9 @@ integer keys. Suppose the library occasionally receives books without an ISBN
 (unpublished manuscripts, internal reports). How would this affect the `isbn`
 primary key? What design change would you make?
 
-> *Your answer:*
+> Since a primary key must be unique and non-null, books without an ISBN could not be stored in the database.
+> To fix this, you should switch to a surrogate integer key (like book_id) as the primary key and move isbn to a separate column that allows
+> NULLs but maintains a UNIQUE constraint.
 
 **Question D – Relational algebra limitations:**  
 Suppose the library wants to find all members who have borrowed the same copy
