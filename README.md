@@ -52,7 +52,9 @@ git --version
 > **Screenshot 1:** Take a screenshot of your terminal showing both version
 > checks and insert it here.
 >
-> `[insert screenshot]`
+><img width="1203" height="154" alt="image" src="https://github.com/user-attachments/assets/9c51c195-78c2-4c20-acc6-2850d5ac9665" />
+
+
 
 ---
 
@@ -175,14 +177,14 @@ Complete the sketch for all six relations (`author`, `book`, `writes`, `copy`,
 > relational model? What would go wrong if you stored multiple author IDs in a
 > single column of `book`?
 >
-> *Your answer:*
+>Storing multiple author IDs in a single column violates First Normal Form (1NF), which requires atomic (single) values. If you do this, querying >the data (like finding all books by a specific author) becomes extremely slow and difficult, and you cannot use standard SQL JOIN operations. A >dedicated join table cleanly breaks the N:M relationship into two manageable 1:N relationships.
 
 > **Question 1.2:** `loan_id` is a surrogate key even though a loan might seem
 > to be uniquely identified by `(member_no, copy_no, loan_date)`. Name one
 > realistic scenario in which that composite key would fail to be a candidate
 > key.
 >
-> *Your answer:*
+> It would fail if a member borrows a book, returns it, and then realizes they need it and borrows the exact same copy again on the same day. The >member_no, copy_no, and loan_date would be identical to the first loan, causing a primary key violation. A surrogate loan_id prevents this >conflict.
 
 ---
 
@@ -293,7 +295,8 @@ sqlite3 library.db < schema.sql
 > **Screenshot 2:** Take a screenshot of the terminal showing the `.tables`
 > output and insert it here.
 >
-> `[insert screenshot]`
+> <img width="1093" height="59" alt="image" src="https://github.com/user-attachments/assets/33796b6f-dae5-46eb-8f06-25851f52c9f1" />
+
 
 ### Task 2c – Commit
 
@@ -339,6 +342,7 @@ git log --oneline
 > You should see your commit at the top, with its short hash and message.
 > That hash is now a permanent address for this exact version of your schema.
 > Nothing can change it without you knowing.
+<img width="1273" height="545" alt="image" src="https://github.com/user-attachments/assets/28def83b-b701-4771-b264-44617a5aa1ff" />
 
 ### Questions for Task 2
 
@@ -346,12 +350,12 @@ git log --oneline
 `writes`. What does this mean in practice if a librarian wants to delete an
 author who has written at least one book in the catalogue?
 
-> *Your answer:*
+> The database will block the deletion and return an error. Because of RESTRICT, you cannot delete an author as long as there are rows in the writes table referencing that author's ID.
 
 **Question 2.2:** `email` in `member` is declared `UNIQUE` but is not the
 primary key. Using the vocabulary from Lecture 03, what kind of key is it?
 
-> *Your answer:*
+> It is a Candidate Key (or Alternate Key).
 
 **Question 2.3:** SQLite does not enforce `CHECK` or `FOREIGN KEY` constraints
 by default. Run the following and observe what happens:
@@ -374,7 +378,12 @@ by default. Run the following and observe what happens:
 > the difference between a constraint declared in DDL and one actually enforced
 > at runtime?
 
-> *Your answer:*
+> *My answer:*
+> Runtime error: FOREIGN KEY constraint failed
+> The Difference is: DDL only defines the structure and rules of the database, but the database engine
+>  must be explicitly configured to enforce those rules during
+> runtime operations (like using PRAGMA foreign_keys = ON in SQLite).
+> Without runtime enforcement, the constraints are defined but ignored.
 
 ---
 
