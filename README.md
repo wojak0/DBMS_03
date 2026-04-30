@@ -452,6 +452,7 @@ sqlite3 library.db < data.sql
 > ```
 >
 > You should see: 3, 3, 4, 3, 3, 3.
+><img width="1877" height="197" alt="image" src="https://github.com/user-attachments/assets/b56d3a4e-80ee-4644-affd-1c2510b2be3b" />
 
 Commit:
 
@@ -479,6 +480,9 @@ SQL:
 
 ```sql
 -- write your query here
+SELECT * 
+FROM copy 
+WHERE shelf_loc LIKE 'A%';
 ```
 
 > Expected result: copy\_no 1 and 2.
@@ -494,6 +498,8 @@ SQL:
 
 ```sql
 -- write your query here
+SELECT title, pub_year 
+FROM book;
 ```
 
 > Expected result: three rows, two columns each.
@@ -510,9 +516,15 @@ SQL:
 
 ```sql
 -- write your query here
+SELECT isbn, shelf_loc 
+FROM copy 
+WHERE shelf_loc >= 'B';
 ```
 
 > Expected result: copy\_no 3 (B-07) and copy\_no 4 (C-12).
+>
+> 
+><img width="1234" height="245" alt="image" src="https://github.com/user-attachments/assets/d03f0e27-ef59-4729-a53e-2f5270c29638" />
 
 ### Task 4d – Equi-Join (⋈)
 
@@ -531,10 +543,21 @@ SQL:
 
 ```sql
 -- write your query here
+SELECT member.full_name, book.title
+FROM loan
+JOIN member ON loan.member_no = member.member_no
+JOIN copy   ON loan.copy_no = copy.copy_no
+JOIN book   ON copy.isbn = book.isbn
+WHERE loan.return_date IS NULL;
 ```
 
 > Expected result: two rows – Schneider borrowing *Database Management Systems*,
 > Müller borrowing *An Introduction to Database Systems*.
+> 
+><img width="536" height="97" alt="image" src="https://github.com/user-attachments/assets/fbb24a8f-ca79-4e1d-908a-406f82764c68" />
+
+>
+>
 
 ### Task 4e – Left Outer Join
 
@@ -554,13 +577,16 @@ GROUP BY m.member_no, m.full_name;
 ```
 
 > Expected result: Müller 1, Schneider 1, Koch 0.
+>
+> <img width="209" height="78" alt="image" src="https://github.com/user-attachments/assets/5ba01739-9165-4c05-901f-33acd978c8b3" />
+>
 
 **Question 4.1:** The condition `l.return_date IS NULL` is in the `ON` clause,
 not in a `WHERE` clause. What would happen to Koch's row if you moved this
 condition into `WHERE return_date IS NULL`? Why? Refer to the formal definition
 of the outer join from Lecture 03.
 
-> *Your answer:*
+> Koch's row would be dropped (filtered out) and disappear from the results
 
 ### Task 4f – Set Difference
 
@@ -574,7 +600,9 @@ $$\pi_{\mathrm{isbn}}(\textsc{book}) - \pi_{\mathrm{isbn}}\!\left(\textsc{copy} 
 In SQL, set difference is expressed with `EXCEPT`:
 
 ```sql
--- write your query here
+SELECT isbn FROM book
+EXCEPT
+SELECT isbn FROM copy JOIN loan ON copy.copy_no = loan.copy_no;
 ```
 
 > Expected result: *The C Programming Language* (copy 4 was never loaned).
