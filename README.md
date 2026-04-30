@@ -858,12 +858,17 @@ operators of the relational algebra (σ, π, ρ, ×, −) without aggregation?
 What does this tell you about the relationship between relational algebra and
 SQL?
 
-> *Your answer:*
+> SQL Query: SELECT member_no, copy_no
+>            FROM loan GROUP BY member_no, copy_no HAVING COUNT(*) > 1;
+> yes, this can be expressed in basic algebra using a self-join (finding rows where IDs differ but member and copy match).
+> This demonstrates that while basic algebra can identify duplicates via self-joins, SQL’s aggregation functions make complex data analysis much
+> more practical and expressive.
 
 > **Screenshot 4:** Take a screenshot of your terminal showing the output of
 > the query from Task 4d (the join across four relations), and insert it here.
 >
-> `[insert screenshot]`
+> <img width="1920" height="1080" alt="Screenshot (466)" src="https://github.com/user-attachments/assets/e128829e-f154-4541-8df0-9252ffab0840" />
+
 
 ---
 
